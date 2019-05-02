@@ -1,23 +1,11 @@
 # Label-free Prediction
 
 This is the code for our recent work that develops a new method for label-free prediction from fluorescent images.
-The code is created and modified based upon the work from Google.The code to their work is at
+The code is created and modified based upon the work from Google. The code to their work is at
 https://github.com/google/in-silico-labeling.
 
 
 ## Citing
-
-If you use this code, please consider citing the original isl paper:
-
-```bibtex
-@article{christiansen2018isl,
-  title={In silico labeling: Predicting fluorescent labels in unlabeled images},
-  author={Christiansen, Eric M and Yang, Samuel J and Ando, D Michael and Javaherian, Ashkan and Skibinski, Gaia and Lipnick, Scott and Mount, Elliot and O’Neil, Alison and Shah, Kevan and Lee, Alicia K and Goyal, Piyush and Fedus, William and Poplin, Ryan and Esteva, Andre and Berndl, Marc and Rubin, Lee L and Nelson, Philip and Finkbeiner, Steven},
-  journal={Cell},
-  year={2018},
-  publisher={Elsevier}
-}
-```
 Citing bibtex for our work will be avialable upon the publishing of our paper.
 
 ## Dependencies
