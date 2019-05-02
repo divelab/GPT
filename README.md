@@ -34,7 +34,7 @@ Data is available at https://github.com/google/in-silico-labeling/blob/master/da
 
 ## Train and test
 
-    python isl\launch.py -- \
+    python gunet\launch.py -- \
       --alsologtostderr \
       --base_directory $BASE_DIRECTORY \
       --mode EVAL_EVAL \
