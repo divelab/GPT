@@ -20,6 +20,14 @@ If you use this code, please consider citing the original isl paper:
 ```
 Citing bibtex for our work will be avialable upon the publishing of our paper.
 
+## Dependencies
+We have tested this code using:
+* Ubuntu 18.04
+* Python 3
+* NumPy
+* TensorFlow
+* OpenCV
+
 ## Data
 Data is available at https://github.com/google/in-silico-labeling/blob/master/data.md.
 
