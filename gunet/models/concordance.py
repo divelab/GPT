@@ -38,9 +38,10 @@ import tensorcheck
 import util
 from models import model_util
 import unet_util
-from unet_layers import (weight_variable, weight_variable_devonc, bias_variable,
-                            conv2d, deconv2d, max_pool, crop_and_concat, pixel_wise_softmax,
-                            cross_entropy, dense_block, conv2d_a, deconv2d_a)
+# from unet_layers import (weight_variable, weight_variable_devonc, bias_variable,
+#                             conv2d, deconv2d, max_pool, crop_and_concat, pixel_wise_softmax,
+#                             cross_entropy, dense_block, conv2d_a, deconv2d_a)
+from unet_layers import *
 
 logging = tf.logging
 lt = tf.contrib.labeled_tensor
@@ -74,7 +75,7 @@ def core(
     The output of the core model as an embedding layer.
     Network heads should take this layer as input.
   """
-  keep_prob = 0.2
+  keep_prob = 0.5
   layers=3
   filter_size=3
   pool_size=2
@@ -82,6 +83,7 @@ def core(
   dense_depth_bottom = 8
   dense_depth_up = [1, 2, 4]
   growth_r = 16
+  num_heads = 1
     
     
   with tf.name_scope(name, 'concordance_core', [input_op]) as scope:
@@ -152,24 +154,31 @@ def core(
           [_, _, _, dense_channels] = dense.shape.as_list()
           conv = conv2d_a(dense, dense_channels, 1, 1, keep_prob) 
           dw_h_convs[layer] = conv
-          pools= max_pool(dw_h_convs[layer], pool_size)
-          in_node = pools
+#           pools= max_pool(dw_h_convs[layer], pool_size)
+          downs = multihead_attention(dw_h_convs[layer], dense_channels, dense_channels,
+                            dense_channels, num_heads, layer_type='DOWN'
+                            ) 
+          in_node = downs
           print("The output of each uplayers is : ", in_node)
 
-  with tf.name_scope("down_conv"):
+  with tf.name_scope("bottom_conv"):
     dense = dense_block(in_node, growth_r, dense_depth_bottom, filter_size, keep_prob)
     [_, _, _, dense_channels] = dense.shape.as_list()
-    conv = conv2d_a(dense, dense_channels, 1, 1, keep_prob)
-    in_node = conv
+#     conv = conv2d_a(dense, dense_channels, 1, 1, keep_prob)
+    keep = multihead_attention(dense, dense_channels, dense_channels,
+                            dense_channels, num_heads, layer_type='SAME')
 
+    in_node = keep
   print("The output of the bottom layers is: ", in_node)
 
   # up layers
   for layer in range(layers - 1, -1, -1):
       with tf.name_scope("up_conv_{}".format(str(layer))):
-          [_, _, _, deconv_channels] = in_node.shape.as_list()
-          h_deconv = deconv2d_a(in_node, deconv_channels//2, filter_size,  pool_size, keep_prob)
-          h_deconv_concat = crop_and_concat(dw_h_convs[layer], h_deconv)
+          [_, _, _, bottom_channels] = in_node.shape.as_list()
+#           h_deconv = deconv2d_a(in_node, bottom_channels//2, filter_size,  pool_size, keep_prob)
+          ups = multihead_attention(in_node, bottom_channels, bottom_channels,
+                            bottom_channels//2, num_heads, layer_type='UP')
+          h_deconv_concat = crop_and_concat(dw_h_convs[layer], ups)
           [_, _, _, concat_channels] = h_deconv_concat.shape.as_list()
           conv = conv2d_a(h_deconv_concat, concat_channels//2, 1, 1, keep_prob)
           dense  = dense_block(conv, growth_r, dense_depth_up[layer], filter_size, keep_prob)
