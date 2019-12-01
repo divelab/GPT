@@ -1,6 +1,6 @@
-# Label-free Prediction
+# Global Pixel Transformers
 
-This is the code for our recent work that develops a new method for label-free prediction from fluorescent images.
+This is the code for our recent work that develops a new method for Global Pixel Transformers for Virtual Staining.
 The code is created and modified based upon the work from Google. The code to their work is at
 https://github.com/google/in-silico-labeling.
 
@@ -48,4 +48,4 @@ In the above:
     `MAP2_CONFOCAL`, and `NFH_CONFOCAL`.
 
 ## Licence
-The code is MIT licensed, as found in the LICENSE file.
+The code is GNU General Public licensed, as found in the LICENSE file.
